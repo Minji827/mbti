@@ -25,9 +25,12 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    .stApp {
-        background-color: #ffffff;
-        color: #000000;
+    html, body, .stApp,
+    [data-testid="stAppViewContainer"],
+    [data-testid="stHeader"],
+    [data-testid="stMain"],
+    [data-testid="stMainBlockContainer"] {
+        background-color: #ffffff !important;
     }
     .stApp, .stApp p, .stApp span, .stApp label,
     .stApp h1, .stApp h2, .stApp h3, .stApp h4,
@@ -37,7 +40,7 @@ st.markdown(
     div[data-testid="stButton"] button {
         border-radius: 14px;
         border: 2px solid #eaeaea;
-        background-color: #fafafa;
+        background-color: #fafafa !important;
         color: #000000 !important;
         text-align: left;
         justify-content: flex-start;
@@ -47,10 +50,10 @@ st.markdown(
     }
     div[data-testid="stButton"] button:hover {
         border-color: #000000;
-        background-color: #f2f2f2;
+        background-color: #f2f2f2 !important;
     }
     div[data-testid="stButton"] button[kind="primary"] {
-        background-color: #000000;
+        background-color: #000000 !important;
         border-color: #000000;
         color: #ffffff !important;
     }
