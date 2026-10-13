@@ -1,428 +1,421 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>소비습관 테스트 💸</title>
-<style>
-  :root{
-    --card:#ffffff;
-    --text:#222222;
-    --accent:#222222;
-    --good:#2ecc71;
-    --normal:#f5a623;
-    --bad:#e74c3c;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    min-height:100vh;
-    font-family:'Segoe UI','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
-    background:#ffffff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  }
-  .card{
-    background:var(--card);
-    border:1px solid #eaeaea;
-    border-radius:24px;
-    max-width:480px;
-    width:100%;
-    padding:32px 28px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.06);
-    position:relative;
-    overflow:hidden;
-  }
-  h1{
-    font-size:1.6rem;
-    text-align:center;
-    margin:0 0 6px;
-    color:var(--text);
-  }
-  .subtitle{
-    text-align:center;
-    color:#888;
-    font-size:0.9rem;
-    margin-bottom:24px;
-  }
-  .progress-wrap{
-    background:#f0f0f0;
-    border-radius:20px;
-    height:10px;
-    overflow:hidden;
-    margin-bottom:24px;
-  }
-  .progress-bar{
-    height:100%;
-    width:0%;
-    background:var(--accent);
-    transition:width 0.4s ease;
-  }
-  .q-number{
-    font-size:0.8rem;
-    color:var(--accent);
-    font-weight:700;
-    margin-bottom:8px;
-  }
-  .question{
-    font-size:1.15rem;
-    font-weight:700;
-    color:var(--text);
-    margin-bottom:18px;
-    line-height:1.4;
-  }
-  .options{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .option-btn{
-    background:#fafafa;
-    border:2px solid #eaeaea;
-    border-radius:14px;
-    padding:14px 16px;
-    text-align:left;
-    font-size:0.95rem;
-    color:var(--text);
-    cursor:pointer;
-    transition:all 0.15s ease;
-  }
-  .option-btn:hover{
-    border-color:var(--accent);
-    background:#f2f2f2;
-    transform:translateX(2px);
-  }
-  .nav-row{
-    display:flex;
-    justify-content:space-between;
-    margin-top:20px;
-  }
-  .ghost-btn{
-    background:none;
-    border:none;
-    color:#aaa;
-    font-size:0.85rem;
-    cursor:pointer;
-  }
-  .ghost-btn:hover{
-    color:var(--accent);
-  }
-  .start-screen, .result-screen{
-    text-align:center;
-  }
-  .emoji-big{
-    font-size:4rem;
-    margin-bottom:10px;
-    display:block;
-  }
-  .start-btn, .restart-btn{
-    margin-top:20px;
-    background:var(--accent);
-    border:none;
-    color:white;
-    font-weight:700;
-    font-size:1rem;
-    padding:14px 28px;
-    border-radius:30px;
-    cursor:pointer;
-    box-shadow:0 8px 20px rgba(0,0,0,0.15);
-    transition:transform 0.15s ease;
-  }
-  .start-btn:hover, .restart-btn:hover{
-    transform:translateY(-2px) scale(1.03);
-  }
-  .result-title{
-    font-size:1.5rem;
-    font-weight:800;
-    margin:10px 0 6px;
-  }
-  .result-badge{
-    display:inline-block;
-    padding:6px 16px;
-    border-radius:20px;
-    font-size:0.85rem;
-    font-weight:700;
-    color:white;
-    margin-bottom:16px;
-  }
-  .result-desc{
-    font-size:0.98rem;
-    line-height:1.6;
-    color:var(--text);
-    text-align:left;
-    background:#f7f7f9;
-    border-radius:16px;
-    padding:18px 18px;
-    margin-bottom:10px;
-  }
-  .result-score{
-    font-size:0.85rem;
-    color:#999;
-    margin-bottom:10px;
-  }
-  .result-img{
-    width:220px;
-    max-width:70%;
-    border-radius:18px;
-    margin:4px auto 16px;
-    display:block;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-  }
-  .hidden{display:none;}
-  .intro-list{
-    text-align:left;
-    font-size:0.88rem;
-    color:#777;
-    margin-top:14px;
-    line-height:1.6;
-  }
-</style>
-</head>
-<body>
+"""A lightweight MBTI-style preference explorer built with Streamlit.
 
-<div class="card">
+Run locally with:
+    streamlit run streamlit_mbti.py
 
-  <!-- 시작 화면 -->
-  <div id="start-screen" class="start-screen">
-    <span class="emoji-big">💸</span>
-    <h1>소비습관 테스트</h1>
-    <div class="subtitle">당신은 저축왕? 지름신? 그냥 평범한 월급루팡?</div>
-    <div class="intro-list">
-      ✅ 총 8개 질문, 1분이면 충분해요<br>
-      ✅ 정답은 없어요, 그냥 당신의 민망한 진실만 있어요<br>
-      ✅ 결과 보고 웃거나 울거나 둘 중 하나입니다
-    </div>
-    <button class="start-btn" onclick="startQuiz()">테스트 시작하기 →</button>
-  </div>
+This is an informal self-reflection activity, not an official or validated
+personality assessment.
+"""
 
-  <!-- 퀴즈 화면 -->
-  <div id="quiz-screen" class="hidden">
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-    <div class="q-number" id="q-number"></div>
-    <div class="question" id="question-text"></div>
-    <div class="options" id="options-container"></div>
-    <div class="nav-row">
-      <button class="ghost-btn" onclick="goBack()">← 이전 질문</button>
-      <button class="ghost-btn" onclick="restartQuiz()">처음으로</button>
-    </div>
-  </div>
+import math
+import streamlit as st
+import streamlit.components.v1 as components
 
-  <!-- 결과 화면 -->
-  <div id="result-screen" class="result-screen hidden">
-    <span class="emoji-big" id="result-emoji"></span>
-    <div class="result-title" id="result-title"></div>
-    <div class="result-badge" id="result-badge"></div>
-    <img class="result-img" id="result-img" src="" alt="결과 짤">
-    <div class="result-score" id="result-score"></div>
-    <div class="result-desc" id="result-desc"></div>
-    <button class="restart-btn" onclick="restartQuiz()">다시 테스트하기 🔄</button>
-  </div>
 
-</div>
+st.set_page_config(
+    page_title="MBTI 성향 탐색기",
+    page_icon="🧭",
+    layout="centered",
+)
 
-<script>
-const questions = [
-  {
-    q: "월급(혹은 용돈)이 들어온 당일, 당신의 심리 상태는?",
-    options: [
-      { text: "일단 고정비·저축부터 자동이체 걸어놓고 숨 쉰다", score: 4 },
-      { text: "조금은 쓰지만 큰 틀에서 계획대로 쓴다", score: 3 },
-      { text: "일단 먹고 싶은 거부터 시킨다, 계획은 내일의 나에게", score: 2 },
-      { text: "통장이 숨 쉴 틈도 안 주고 바로 '텅장'행 급행열차 탑승", score: 1 },
-    ],
-  },
-  {
-    q: "장바구니에 담아둔 물건, 며칠 뒤 다시 보면?",
-    options: [
-      { text: "3일 이상 지나도 필요하면 산다 (쿨타임 지킴이)", score: 4 },
-      { text: "할인할 때만 산다", score: 3 },
-      { text: "이미 '구매완료' 문자가 와있다", score: 1 },
-      { text: "장바구니는 그냥 거쳐가는 정류장이다, 바로 결제", score: 1 },
-    ],
-  },
-  {
-    q: "배달 앱 / 카페 앱 알림이 뜨면?",
-    options: [
-      { text: "알림 끈 지 오래, 내 눈엔 안 보인다", score: 4 },
-      { text: "가끔 보긴 하는데 참을 때가 많다", score: 3 },
-      { text: "'오늘만 특별히' 를 거의 매일 외친다", score: 2 },
-      { text: "손이 먼저 앱을 열고 있다, 이미 주문 완료", score: 1 },
-    ],
-  },
-  {
-    q: "지금 당장 '이번 달 구독 서비스'가 몇 개인지 말할 수 있나요?",
-    options: [
-      { text: "정확히 몇 개, 얼마 나가는지까지 외우고 있다", score: 4 },
-      { text: "대충은 안다, 큰 것들만", score: 3 },
-      { text: "글쎄... 넷플릭스는 있는 것 같다", score: 2 },
-      { text: "모른다, 그리고 알고 싶지도 않다", score: 1 },
-    ],
-  },
-  {
-    q: "친구가 '이거 요즘 핫하대' 하면서 뭔가를 추천하면?",
-    options: [
-      { text: "필요한지 따져보고 안 필요하면 패스", score: 4 },
-      { text: "찜해두고 한번 검색은 해본다", score: 3 },
-      { text: "'오 그래?' 하면서 바로 검색창에 입력", score: 2 },
-      { text: "말 끝나기도 전에 이미 결제 중", score: 1 },
-    ],
-  },
-  {
-    q: "비상금(예상치 못한 지출 대비 자금)에 대해 솔직히 말하면?",
-    options: [
-      { text: "3~6개월치 생활비는 따로 모아놨다", score: 4 },
-      { text: "적지만 조금은 있다", score: 3 },
-      { text: "비상금... 그게 뭔가요? 먹는 건가요?", score: 2 },
-      { text: "비상금은커녕 다음 월급도 당겨써야 할 판", score: 1 },
-    ],
-  },
-  {
-    q: "이번 달 카드값 명세서를 보는 당신의 반응은?",
-    options: [
-      { text: "예상한 범위 안이라 평온하다", score: 4 },
-      { text: "약간 놀라지만 바로 수긍한다 ('맞다 그거 샀지')", score: 3 },
-      { text: "'이게 다 뭐지?' 하며 식은땀이 난다", score: 2 },
-      { text: "명세서 확인을 미루고 있다, 무서워서 못 본다", score: 1 },
-    ],
-  },
-  {
-    q: "스트레스 받는 날, 당신의 셀프 처방은?",
-    options: [
-      { text: "산책, 운동, 수면 등 돈 안 드는 방법을 먼저 찾는다", score: 4 },
-      { text: "소소한 간식 하나 사먹는 정도로 푼다", score: 3 },
-      { text: "'플렉스'가 필요해, 작은 지름으로 해소한다", score: 2 },
-      { text: "'힐링엔 역시 쇼핑' 이라며 큰 결제가 들어간다", score: 1 },
-    ],
-  },
-];
+st.markdown(
+    """
+    <style>
+    div[data-testid="stButton"] button {
+        border-radius: 14px;
+        transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+    div.st-key-card_option_0 button,
+    div.st-key-card_option_1 button {
+        min-height: 126px !important;
+        height: 100% !important;
+        padding: 22px !important;
+        text-align: left !important;
+        white-space: normal !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        font-size: 1.08rem !important;
+        line-height: 1.55 !important;
+        border-radius: 18px !important;
+        box-shadow: 0 3px 12px rgba(31, 41, 55, 0.07);
+    }
+    div.st-key-card_option_0 button:hover,
+    div.st-key-card_option_1 button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(31, 41, 55, 0.12);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-let currentQ = 0;
-let answers = [];
 
-function startQuiz(){
-  document.getElementById('start-screen').classList.add('hidden');
-  document.getElementById('quiz-screen').classList.remove('hidden');
-  currentQ = 0;
-  answers = [];
-  renderQuestion();
+# Each dimension has three balanced, situational questions. The first option
+# maps to the first letter shown in the axis; the second maps to the second.
+QUESTIONS = [
+    {
+        "id": "ei_1",
+        "axis": "에너지 방향",
+        "pair": ("I", "E"),
+        "prompt": "사람들과 시간을 보낸 뒤, 나는 보통 어떻게 회복하나요?",
+        "options": [
+            ("I", "혼자 조용히 쉬며 에너지를 되찾는다"),
+            ("E", "가까운 사람과 이야기를 나누며 활력을 얻는다"),
+        ],
+    },
+    {
+        "id": "ei_2",
+        "axis": "에너지 방향",
+        "pair": ("I", "E"),
+        "prompt": "새로운 문제를 생각할 때 나는 어떻게 시작하나요?",
+        "options": [
+            ("I", "먼저 혼자 생각을 정리한 뒤 의견을 나눈다"),
+            ("E", "누군가와 이야기하며 생각을 발전시킨다"),
+        ],
+    },
+    {
+        "id": "ei_3",
+        "axis": "에너지 방향",
+        "pair": ("I", "E"),
+        "prompt": "모임에서 나는 어떤 편인가요?",
+        "options": [
+            ("I", "분위기를 살피다가 생각이 정리되면 참여한다"),
+            ("E", "대화에 먼저 참여하며 생각을 바로 표현한다"),
+        ],
+    },
+    {
+        "id": "sn_1",
+        "axis": "정보 인식",
+        "pair": ("S", "N"),
+        "prompt": "새로운 도구를 배울 때 더 도움이 되는 것은 무엇인가요?",
+        "options": [
+            ("S", "구체적인 예시와 단계별 사용법"),
+            ("N", "작동 원리와 전체 구조에 대한 설명"),
+        ],
+    },
+    {
+        "id": "sn_2",
+        "axis": "정보 인식",
+        "pair": ("S", "N"),
+        "prompt": "새로운 과제를 맡으면 어디에 먼저 관심이 가나요?",
+        "options": [
+            ("S", "지금 확인할 수 있는 조건과 세부 사항"),
+            ("N", "앞으로 확장할 수 있는 가능성과 방향"),
+        ],
+    },
+    {
+        "id": "sn_3",
+        "axis": "정보 인식",
+        "pair": ("S", "N"),
+        "prompt": "어떤 일을 설명할 때 나는 주로 무엇을 말하나요?",
+        "options": [
+            ("S", "실제로 있었던 일과 구체적인 사례"),
+            ("N", "그 일에서 발견한 의미와 반복되는 패턴"),
+        ],
+    },
+    {
+        "id": "tf_1",
+        "axis": "판단 기준",
+        "pair": ("T", "F"),
+        "prompt": "두 가지 안 중 하나를 선택해야 할 때 더 먼저 보는 것은 무엇인가요?",
+        "options": [
+            ("T", "기준의 일관성과 논리적 근거"),
+            ("F", "관련된 사람에게 미칠 영향과 중요하게 여기는 가치"),
+        ],
+    },
+    {
+        "id": "tf_2",
+        "axis": "판단 기준",
+        "pair": ("T", "F"),
+        "prompt": "팀원에게 개선점을 전달할 때 나는 보통 어떻게 하나요?",
+        "options": [
+            ("T", "고칠 점을 명확하고 직접적으로 말한다"),
+            ("F", "상대의 상황을 고려해 전달 방식과 순서를 조절한다"),
+        ],
+    },
+    {
+        "id": "tf_3",
+        "axis": "판단 기준",
+        "pair": ("T", "F"),
+        "prompt": "팀 내 의견이 갈리면 무엇을 먼저 확인하나요?",
+        "options": [
+            ("T", "어떤 주장이 근거와 논리에 더 잘 맞는지"),
+            ("F", "각 선택이 사람들에게 어떤 영향을 주는지"),
+        ],
+    },
+    {
+        "id": "jp_1",
+        "axis": "생활 방식",
+        "pair": ("J", "P"),
+        "prompt": "프로젝트를 시작할 때 나는 어떻게 하는 편인가요?",
+        "options": [
+            ("J", "주요 일정과 단계를 정해두면 마음이 편하다"),
+            ("P", "목표를 정한 뒤 진행하면서 방법을 조정하는 편이 편하다"),
+        ],
+    },
+    {
+        "id": "jp_2",
+        "axis": "생활 방식",
+        "pair": ("J", "P"),
+        "prompt": "약속이나 여행 계획을 세울 때 더 선호하는 것은 무엇인가요?",
+        "options": [
+            ("J", "장소와 시간을 미리 정해두는 것"),
+            ("P", "큰 틀만 정하고 상황에 따라 선택하는 것"),
+        ],
+    },
+    {
+        "id": "jp_3",
+        "axis": "생활 방식",
+        "pair": ("J", "P"),
+        "prompt": "여러 작업이 남아 있을 때 나는 어떻게 하는 편인가요?",
+        "options": [
+            ("J", "하나를 마무리한 뒤 다음 작업으로 넘어간다"),
+            ("P", "상황에 따라 여러 작업을 오가며 진행한다"),
+        ],
+    },
+]
+
+
+LETTER_GUIDE = {
+    "I": "혼자 생각을 정리하고, 조용한 환경에서 에너지를 회복하는 쪽으로 답했어요.",
+    "E": "대화와 상호작용을 통해 생각을 발전시키고, 사람들과 함께할 때 활력을 얻는 쪽으로 답했어요.",
+    "S": "구체적인 정보와 실제 사례, 확인 가능한 세부 사항에 주목하는 쪽으로 답했어요.",
+    "N": "전체 구조와 의미, 앞으로의 가능성과 패턴에 주목하는 쪽으로 답했어요.",
+    "T": "일관된 기준과 논리, 근거를 중심으로 판단하는 쪽으로 답했어요.",
+    "F": "사람에게 미치는 영향과 관계, 중요하게 여기는 가치를 함께 고려하는 쪽으로 답했어요.",
+    "J": "일정을 정리하고 계획을 세워 차근차근 마무리하는 쪽으로 답했어요.",
+    "P": "상황에 따라 선택지를 열어두고 진행 중에 조정하는 쪽으로 답했어요.",
 }
 
-function renderQuestion(){
-  const total = questions.length;
-  const q = questions[currentQ];
-  document.getElementById('q-number').textContent = `Q${currentQ+1} / ${total}`;
-  document.getElementById('question-text').textContent = q.q;
-  document.getElementById('progress-bar').style.width = `${(currentQ/total)*100}%`;
 
-  const container = document.getElementById('options-container');
-  container.innerHTML = '';
-  q.options.forEach((opt) => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.textContent = opt.text;
-    btn.onclick = () => selectOption(opt.score);
-    container.appendChild(btn);
-  });
-}
+def initialize_state():
+    if "current_index" not in st.session_state:
+        st.session_state.current_index = 0
+    if "answers" not in st.session_state:
+        st.session_state.answers = {}
+    if "completed" not in st.session_state:
+        st.session_state.completed = False
 
-function selectOption(score){
-  answers[currentQ] = score;
-  if (currentQ < questions.length - 1){
-    currentQ++;
-    renderQuestion();
-  } else {
-    showResult();
-  }
-}
 
-function goBack(){
-  if (currentQ > 0){
-    currentQ--;
-    renderQuestion();
-  }
-}
+def restart_test():
+    for question in QUESTIONS:
+        st.session_state.pop(f"choice_{question['id']}", None)
+    st.session_state.current_index = 0
+    st.session_state.answers = {}
+    st.session_state.completed = False
 
-function restartQuiz(){
-  document.getElementById('result-screen').classList.add('hidden');
-  document.getElementById('quiz-screen').classList.add('hidden');
-  document.getElementById('start-screen').classList.remove('hidden');
-}
 
-function showResult(){
-  const total = answers.reduce((a,b)=>a+b,0);
-  const max = questions.length * 4;
-  document.getElementById('quiz-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.remove('hidden');
-  document.getElementById('result-score').textContent = `총점 ${total} / ${max}점`;
+def calculate_results(answers):
+    results = []
+    mbti = []
 
-  let result;
-  if (total >= 26){
-    result = {
-      emoji: "👑",
-      title: "소비습관 甲 (아주 좋음)",
-      badgeColor: "var(--good)",
-      badgeText: "미래의 이재용 🤫",
-      img: "이재용 쉿.jpeg",
-      desc: `
-        솔직히 말할게요. 당신 주변 사람들 통장 사정을 다 합쳐도
-        당신 혼자 이기는 레벨입니다. 😮<br><br>
-        충동구매는 당신 사전에 없는 단어고, 비상금은 이미 비상 상황을 대비해
-        비상 대기 중이죠. 카드 명세서를 봐도 심장이 평온한 그 능력,
-        정말 아무나 가진 게 아닙니다. 이 정도면 "쉿, 비밀인데 나 사실 부자야" 해도 믿을 각.<br><br>
-        <b>단 하나의 리스크:</b> 너무 안 쓰다가 가끔은 스스로에게도
-        작은 선물 하나쯤 해줘도 됩니다. 아낀 돈, 당신이 쓰라고 있는 거예요 😉
-      `,
-    };
-  } else if (total >= 16){
-    result = {
-      emoji: "🙂",
-      title: "소비습관 보통 (평범)",
-      badgeColor: "var(--normal)",
-      badgeText: "염.....",
-      img: "dja.jpeg",
-      desc: `
-        극단적으로 아끼지도, 흥청망청 쓰지도 않는 딱 '중간' 라인입니다.
-        어떤 날은 계획적이고, 어떤 날은 배달앱 알림에 홀리는 그런 사람이죠. 😅<br><br>
-        누가 "너 소비습관 어때?" 라고 물으면 저 고양이처럼
-        "염.....( 침묵 )" 하고 눈만 깜빡이게 되는 애매~한 포지션.
-        나쁘지 않지만 '이번 달도 뭐 산 것도 없는데 왜 텅장이지?'
-        싶은 날이 가끔 있을 뿐입니다.<br><br>
-        <b>한 줄 처방:</b> 가계부 앱 하나만 깔아도 등급업 가능성 충분합니다.
-      `,
-    };
-  } else {
-    result = {
-      emoji: "🔥",
-      title: "소비습관 적신호 (안 좋음)",
-      badgeColor: "var(--bad)",
-      badgeText: "난가? 아... 😭",
-      img: "다운로드 (1).jpeg",
-      desc: `
-        축하합니다, 당신은 지름신의 총애를 받는 소수의 선택된 자입니다. 🙏<br><br>
-        장바구니는 당신에게 '숙고의 시간'이 아니라 '결제 직전 정류장'이고,
-        월급날의 기쁨은 보통 3일 안에 소멸되는 걸로 유명하죠.
-        "가난을 거꾸로 읽으면?" 이라는 질문에 저도 모르게
-        "난가...?" 라고 답하게 되는 그 마음, 저희는 압니다.<br><br>
-        <b>그래도 희망은 있어요.</b> 지금 이 순간 '아 나 좀 심한가?' 하고
-        자각했다는 것 자체가 큰 발전입니다. 일단 알림부터 끄고,
-        비상금 10만원부터 시작해봐요. 작게 시작하면 됩니다 💪
-      `,
-    };
-  }
+    for start in range(0, len(QUESTIONS), 3):
+        group = QUESTIONS[start : start + 3]
+        first, second = group[0]["pair"]
+        counts = {first: 0, second: 0}
+        for question in group:
+            counts[answers[question["id"]]] += 1
 
-  document.getElementById('result-emoji').textContent = result.emoji;
-  document.getElementById('result-title').textContent = result.title;
-  const badge = document.getElementById('result-badge');
-  badge.textContent = result.badgeText;
-  badge.style.background = result.badgeColor;
-  document.getElementById('result-img').src = encodeURI(result.img);
-  document.getElementById('result-desc').innerHTML = result.desc;
-}
-</script>
+        winner = first if counts[first] > counts[second] else second
+        winner_count = counts[winner]
+        mbti.append(winner)
+        results.append(
+            {
+                "axis": group[0]["axis"],
+                "pair": group[0]["pair"],
+                "winner": winner,
+                "count": winner_count,
+                "total": len(group),
+                # This is answer consistency, not a validated measure of
+                # personality strength.
+                "consistency": winner_count / len(group) * 100,
+            }
+        )
 
-</body>
-</html>
+    return "".join(mbti), results
+
+
+def make_radar_svg(results):
+    """Build a dependency-free SVG radar chart of within-axis answer agreement."""
+    width, height = 500, 500
+    cx, cy, radius = 250, 250, 145
+    angles = [-math.pi / 2, 0, math.pi / 2, math.pi]
+
+    def point(value, angle):
+        scaled_radius = radius * value / 100
+        return (
+            cx + scaled_radius * math.cos(angle),
+            cy + scaled_radius * math.sin(angle),
+        )
+
+    svg = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        'role="img" aria-label="네 가지 성향 차원의 응답 일치율 방사형 그래프">',
+        '<rect width="100%" height="100%" rx="18" fill="#ffffff"/>',
+    ]
+
+    # Four diamond-shaped guide rings.
+    for level in (25, 50, 75, 100):
+        coords = [point(level, angle) for angle in angles]
+        points = " ".join(f"{x:.1f},{y:.1f}" for x, y in coords)
+        svg.append(
+            f'<polygon points="{points}" fill="none" stroke="#e5e7eb" stroke-width="1"/>'
+        )
+        top_x, top_y = point(level, angles[0])
+        svg.append(
+            f'<text x="{top_x + 5:.1f}" y="{top_y + 4:.1f}" '
+            'font-size="10" fill="#9ca3af">'
+            f"{level}</text>"
+        )
+
+    for angle in angles:
+        x, y = point(100, angle)
+        svg.append(
+            f'<line x1="{cx}" y1="{cy}" x2="{x:.1f}" y2="{y:.1f}" '
+            'stroke="#d1d5db" stroke-width="1"/>'
+        )
+
+    values = [item["consistency"] for item in results]
+    coords = [point(value, angle) for value, angle in zip(values, angles)]
+    polygon_points = " ".join(f"{x:.1f},{y:.1f}" for x, y in coords)
+    svg.append(
+        f'<polygon points="{polygon_points}" fill="#8b5cf6" fill-opacity="0.22" '
+        'stroke="#7c3aed" stroke-width="3" stroke-linejoin="round"/>'
+    )
+    for (x, y), value in zip(coords, values):
+        svg.append(
+            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="5" fill="#7c3aed" '
+            'stroke="#ffffff" stroke-width="2">'
+            f'<title>{value:.0f}%</title></circle>'
+        )
+
+    # Labels sit outside the four chart vertices.
+    labels = [
+        (250, 28, "middle", 46),
+        (465, 246, "end", 266),
+        (250, 455, "middle", 473),
+        (35, 246, "start", 266),
+    ]
+    for item, (x, y, anchor, sub_y) in zip(results, labels):
+        svg.append(
+            f'<text x="{x}" y="{y}" text-anchor="{anchor}" '
+            'font-family="sans-serif" font-size="13" font-weight="700" fill="#374151">'
+            f'{item["axis"]}</text>'
+        )
+        svg.append(
+            f'<text x="{x}" y="{sub_y}" text-anchor="{anchor}" '
+            'font-family="sans-serif" font-size="11" fill="#6b7280">'
+            f'{item["winner"]} · {item["count"]}/{item["total"]} 응답</text>'
+        )
+
+    svg.append("</svg>")
+    return "".join(svg)
+
+
+def show_result():
+    mbti, results = calculate_results(st.session_state.answers)
+
+    st.progress(1.0, text="모든 문항에 답했어요")
+    st.title(f"당신의 응답 경향은 **{mbti}**")
+    st.write(
+        "아래 설명은 이번 답변에서 더 많이 선택한 방향을 요약한 거예요. "
+        "사람의 성격을 확정하거나 평가하는 결과는 아닙니다."
+    )
+
+    st.subheader("네 가지 차원별 응답 경향")
+    for item in results:
+        st.markdown(f"**{item['axis']} · {item['winner']}**")
+        st.write(LETTER_GUIDE[item["winner"]])
+
+    st.subheader("차원별 응답 일치율")
+    st.caption(
+        "방사형 그래프는 각 차원에서 결과 글자와 같은 방향을 고른 문항의 비율입니다. "
+        "성향의 강도나 공식 검사 점수를 뜻하지 않습니다."
+    )
+    components.html(make_radar_svg(results), height=510, scrolling=False)
+
+    metric_cols = st.columns(4)
+    for col, item in zip(metric_cols, results):
+        col.metric(
+            label=f"{item['axis']} ({item['pair'][0]}/{item['pair'][1]})",
+            value=item["winner"],
+            delta=f"{item['count']}/{item['total']} 문항 일치",
+            delta_color="off",
+        )
+
+    st.info("이 페이지는 수업·자기 탐색을 위한 간이 활동이며, 공식 MBTI 검사나 심리 진단이 아닙니다.")
+    if st.button("🔄 다시 하기", use_container_width=True, key="restart_result"):
+        restart_test()
+        st.rerun()
+
+
+initialize_state()
+
+st.title("🧭 MBTI 성향 탐색기")
+st.write("상황을 읽고, 나에게 조금 더 가까운 선택지를 골라보세요.")
+st.caption("총 12문항 · 네 차원별 3문항 · 정답은 없어요")
+
+if st.session_state.completed:
+    show_result()
+else:
+    current_index = st.session_state.current_index
+    question = QUESTIONS[current_index]
+    widget_key = f"choice_{question['id']}"
+
+    selected_code = st.session_state.answers.get(question["id"])
+    answered_count = len(st.session_state.answers)
+    st.progress(answered_count / len(QUESTIONS), text=f"응답 진행률 · {answered_count}/{len(QUESTIONS)}")
+    st.caption(f"문항 {current_index + 1} / {len(QUESTIONS)} · {question['axis']} ({question['pair'][0]} / {question['pair'][1]})")
+    st.subheader(question["prompt"])
+
+    st.caption("두 선택지 중 나에게 조금 더 가까운 카드를 눌러주세요.")
+    card_cols = st.columns(2, gap="medium")
+    for option_index, (letter, option_text) in enumerate(question["options"]):
+        is_selected = selected_code == letter
+        with card_cols[option_index]:
+            st.markdown(f"**선택지 {chr(65 + option_index)}**")
+            if st.button(
+                f"{'✓  선택됨  ·  ' if is_selected else '＋  '}{option_text}",
+                key=f"card_option_{option_index}",
+                type="primary" if is_selected else "secondary",
+                use_container_width=True,
+            ):
+                st.session_state.answers[question["id"]] = letter
+                st.rerun()
+
+    st.divider()
+    previous_col, next_col = st.columns(2)
+    with previous_col:
+        previous_clicked = st.button(
+            "← 이전",
+            disabled=current_index == 0,
+            use_container_width=True,
+            key="previous_question",
+        )
+    with next_col:
+        is_last = current_index == len(QUESTIONS) - 1
+        next_clicked = st.button(
+            "결과 보기 ✨" if is_last else "다음 →",
+            disabled=selected_code is None,
+            use_container_width=True,
+            type="primary",
+            key="next_question",
+        )
+
+    if previous_clicked:
+        st.session_state.current_index -= 1
+        st.rerun()
+    if next_clicked:
+        if is_last:
+            st.session_state.completed = True
+        else:
+            st.session_state.current_index += 1
+        st.rerun()
+
+    if selected_code is None:
+        st.caption("다음 문항으로 가려면 선택지를 먼저 골라주세요.")
+
+    st.markdown(" ")
+    if st.button("처음부터 다시 하기", key="restart_quiz", use_container_width=True):
+        restart_test()
+        st.rerun()
